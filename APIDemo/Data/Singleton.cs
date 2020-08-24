@@ -10,11 +10,13 @@ namespace APIDemo.Data
     {
         private readonly static Singleton _instance = new Singleton();
         public List<ExchangeRate> ExchangeRates { get; set; }
+        public int LastId = 5;
         private Singleton()
         {
                 ExchangeRates = new List<ExchangeRate>();
                 ExchangeRate newExchangeRate = new ExchangeRate
                 {
+                    Id = 1,
                     Date = Convert.ToDateTime("2020-08-01"),
                     GTQ = 1,
                     USD = 7.9
@@ -23,6 +25,7 @@ namespace APIDemo.Data
 
                 newExchangeRate = new ExchangeRate
                 {
+                    Id = 2,
                     Date = Convert.ToDateTime("2020-08-02"),
                     GTQ = 1,
                     USD = 7.88
@@ -31,6 +34,7 @@ namespace APIDemo.Data
 
                 newExchangeRate = new ExchangeRate
                 {
+                    Id = 3,
                     Date = Convert.ToDateTime("2020-08-03"),
                     GTQ = 1,
                     USD = 7.86
@@ -39,6 +43,7 @@ namespace APIDemo.Data
 
                 newExchangeRate = new ExchangeRate
                 {
+                    Id = 4,
                     Date = Convert.ToDateTime("2020-08-04"),
                     GTQ = 1,
                     USD = 7.92
@@ -47,6 +52,7 @@ namespace APIDemo.Data
 
                 newExchangeRate = new ExchangeRate
                 {
+                    Id = 5,
                     Date = Convert.ToDateTime("2020-08-05"),
                     GTQ = 1,
                     USD = 7.87

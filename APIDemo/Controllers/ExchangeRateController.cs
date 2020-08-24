@@ -20,16 +20,18 @@ namespace APIDemo
         public IEnumerable<ExchangeRate> Get([FromQuery] string BaseCurrency)
         {
             if (BaseCurrency != null && BaseCurrency.ToLower() == "usd")
-                return Singleton.Instance.ExchangeRates.Select(x => new ExchangeRate { Date = x.Date, GTQ = x.GTQ / x.USD, USD = 1 });
+                return Singleton.Instance.ExchangeRates.Select(x => new ExchangeRate { Id = x.Id, Date = x.Date, GTQ = x.GTQ / x.USD, USD = 1 });
 
             return Singleton.Instance.ExchangeRates;
         }
 
-        // GET api/<ExchangeRateController>/5
+        // GET api/<ExchangeRateController>/2020-08-01
         [HttpGet("{date}")]
-        public ExchangeRate GetByDate([FromRoute] string date)
+        public ActionResult GetByDate([FromRoute] string date)
         {
-            return Singleton.Instance.ExchangeRates.Where(x => x.Date == Convert.ToDateTime(date)).FirstOrDefault<ExchangeRate>();
+            var result = Singleton.Instance.ExchangeRates.Where(x => x.Date == Convert.ToDateTime(date)).FirstOrDefault<ExchangeRate>();
+            if (result == null) return NotFound();
+            return Ok(result);
         }
 
         // POST api/<ExchangeRateController>
@@ -38,7 +40,12 @@ namespace APIDemo
         {
             try
             {
+                var result = Singleton.Instance.ExchangeRates.Where(x => x.Date == newValue.Date).FirstOrDefault<ExchangeRate>();
+                if (result != null) return BadRequest();
+
+                newValue.Id = Singleton.Instance.LastId + 1;
                 Singleton.Instance.ExchangeRates.Add(newValue);
+                Singleton.Instance.LastId++;
                 return Created("",newValue);
             }
             catch (Exception ex)
@@ -48,13 +55,13 @@ namespace APIDemo
             
         }
 
-        // PUT api/<ExchangeRateController>/5
+        // PUT api/<ExchangeRateController>/2020-08-01
         [HttpPut("{date}")]
         public ActionResult Put(string date, [FromBody] ExchangeRate value)
         {
-            var result = Singleton.Instance.ExchangeRates.Where(x => x.Date == Convert.ToDateTime(date)).First<ExchangeRate>();
+            var result = Singleton.Instance.ExchangeRates.Where(x => x.Date == Convert.ToDateTime(date)).FirstOrDefault<ExchangeRate>();
             if (result == null) return NotFound();
-
+            value.Id = result.Id;
             Singleton.Instance.ExchangeRates.RemoveAll(x => x.Date == Convert.ToDateTime(date));
             Singleton.Instance.ExchangeRates.Add(value);
             return NoContent();
@@ -64,7 +71,7 @@ namespace APIDemo
         [HttpDelete("{date}")]
         public ActionResult Delete(string date)
         {
-            var result = Singleton.Instance.ExchangeRates.Where(x => x.Date == Convert.ToDateTime(date)).First<ExchangeRate>();
+            var result = Singleton.Instance.ExchangeRates.Where(x => x.Date == Convert.ToDateTime(date)).FirstOrDefault<ExchangeRate>();
             if (result == null) return NotFound();
 
             Singleton.Instance.ExchangeRates.RemoveAll(x => x.Date == Convert.ToDateTime(date));
